@@ -9,7 +9,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ElevenlabsService {
   private apiKey = 'sk_5bd39bf5092e4241337c84532c8cf1d3d8b506aa9320b892';  // Thay bằng API key thật
-  private voiceId = 'NOpBlnGInO9m6vDvFkFC'; // Bạn cần lấy từ ElevenLabs dashboard
+  private voiceId = 'nPczCjzI2devNBz1zQrb'; // Bạn cần lấy từ ElevenLabs dashboard
 
   private apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${this.voiceId}`;
 

@@ -4,36 +4,34 @@
     <input type="text" placeholder="Search Voice..." class="search-input" />
     <select class="select-input">
         <option value="">Select Voice</option>
-        <option *ngFor="let voice of voices" [value]="voice">{{ voice }}</option>
     </select>
     <select class="select-input">
         <option value="">Select Model</option>
-        <option *ngFor="let model of models" [value]="model">{{ model }}</option>
     </select>
 
     <input type="number" placeholder="Number" width="20px" class="number-input" />
 
-    <input type="file" class="file-input" />
+    <input type="file" class="file-input" (change)="fnOnFileSelected($event)" accept=".txt" />
   </header>
 
   <!-- Main -->
   <main class="main">
-    <button class="start-button" (click)="downloadMP3()">Start</button>
+    <button class="start-button" (click)="fnStart()">Start</button>
     <table class="data-table">
       <thead>
         <tr>
           <th>ID</th>
-          <th>Content</th>
+          <th>status</th>
           <th>Voice</th>
-          <th>Status</th>
+          <th>content</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of tableData">
-          <td>{{ item.id }}</td>
-          <td>{{ item.content }}</td>
-          <td>{{ item.voice }}</td>
-          <td>{{ item.status }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{ item }}</td>
         </tr>
       </tbody>
     </table>
