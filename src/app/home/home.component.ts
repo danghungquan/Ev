@@ -130,7 +130,7 @@ export class HomeComponent {
         const nameFile = file.name.replace(/\.[^/.]+$/, '');
         let dataRecord = {
           id: id,
-          nameFile: nameFile + '_' + index + 1,
+          nameFile: nameFile + '_' + index,
           status: "Pending",
           count: content.length,
           content: content
