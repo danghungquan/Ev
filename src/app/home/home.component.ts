@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 export class HomeComponent {
   constructor(private elevenlabs: ElevenlabsService) {}
   
-  tableData: string[] = [];
+  tableData: any = [];
   IdVoice = '';
   selectedDelimiter = " ";
   infoVoice: any = {
@@ -53,10 +53,8 @@ export class HomeComponent {
   async fnExportFile() {
     let i = 0;
     for (const item of this.tableData) {
-      console.log(item);
-      console.log(i);
       i++
-      await this.fnDownloadMP3(item, i); // đợi gọi API xong rồi mới tiếp
+      await this.fnDownloadMP3(item.content, i); // đợi gọi API xong rồi mới tiếp
     }
   }
 
@@ -80,23 +78,66 @@ export class HomeComponent {
   }
 
   fnOnfolderSelected(event: Event): void  {
-    const input = event.target as HTMLInputElement;
-    console.log(input.files);
-  }
-
-  fnOnFileSelected(event: Event): void {
+    let id = 1;
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) {
       return;
     }
+    this.tableData = [];
+    const listFile = input.files;
+    for (let index = 0; index < listFile.length; index++) {
+      const file = listFile[index];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = reader.result as string;
+        const arrayConten = this.fnSplitTextBySpaceMaxLength(text, 10, this.selectedDelimiter);
+        for (let index = 0; index < arrayConten.length; index++) {
+          const content = arrayConten[index];
+          const nameFile = file.name.replace(/\.[^/.]+$/, '');
+          let dataRecord = {
+            id: id,
+            nameFile: nameFile + '_' + index,
+            status: "Pending",
+            count: content.length,
+            content: content
+          }
+          this.tableData.push(dataRecord)
+          id++;
+        }
+        console.log(this.tableData);
+      };
+      reader.onerror = () => {
+        console.error('Error reading file');
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  fnOnFileSelected(event: Event): void {
+    let id = 1;
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) {
+      return;
+    }
+    this.tableData = [];
     const file = input.files[0];
     const reader = new FileReader();
     reader.onload = () => {
       const text = reader.result as string;
-      const arrayConten = this.fnSplitTextBySpaceMaxLength(text, 10, "\n");
-        this.tableData = arrayConten;
-      console.log('File content:', text);
-      // Bạn có thể xử lý nội dung file ở đây
+      const arrayConten = this.fnSplitTextBySpaceMaxLength(text, 10, this.selectedDelimiter);
+      for (let index = 0; index < arrayConten.length; index++) {
+        const content = arrayConten[index];
+        const nameFile = file.name.replace(/\.[^/.]+$/, '');
+        let dataRecord = {
+          id: id,
+          nameFile: nameFile + '_' + index + 1,
+          status: "Pending",
+          count: content.length,
+          content: content
+        }
+        this.tableData.push(dataRecord)
+        id++;
+      }
     };
     reader.onerror = () => {
       console.error('Error reading file');
@@ -128,5 +169,13 @@ export class HomeComponent {
       result.push(currentChunk);
     }
     return result;
+  }
+
+  fnResetFileInput(fileInput: HTMLInputElement): void {
+    fileInput.value = ''; // reset giá trị để click lại vẫn gọi được change
+  }
+  
+  fnResetFolderInput(folderInput: HTMLInputElement): void {
+    folderInput.value = ''; // reset giá trị để click lại vẫn gọi được change
   }
 }

@@ -63,55 +63,61 @@
   <!-- Main -->
   <main class="main">
     <div style="width: 100%;">
+      <div style="width: 100%; margin-bottom: 20px;">
+        <select [(ngModel)]="selectedDelimiter">
+          <option [ngValue]="' '">Tùy ý</option>
+          <option [ngValue]="'.'">Phân tách bằng [ . ]</option>
+          <option [ngValue]="'/'">Phân tách bằng [ / ]</option>
+          <option [ngValue]="'\n'">Phân tách bằng [ new_line ]</option>
+        </select>
+      </div>
       <div style="width: 100%;">
         <!-- <input type="file" class="file-input" (change)="fnOnFileSelected($event)" accept=".txt" /> -->
         <label class="custom-file-label" for="fileInput">
         <span>{{ 'Chọn một file...' }}</span>
         </label>
         <input
+          #fileInput
           accept=".txt"
           type="file"
           id="fileInput"
           class="custom-file-input"
           (change)="fnOnFileSelected($event)"
+          (click)="fnResetFileInput(fileInput)" 
         >
         <label class="custom-file-label" for="folderInput">
         <span>{{ 'Chọn nhiều file trong một folder...' }}</span>
         </label>
         <input
+          #folderInput
           type="file"
           id="folderInput"
           class="custom-file-input"
           (change)="fnOnfolderSelected($event)"
+          (click)="fnResetFolderInput(folderInput)" 
           webkitdirectory
         >
       </div>
       <div style="width: 100%; margin-top: 20px; text-align: right;">
         <button class="start-button" (click)="fnExportFile()">Export Từng File</button>
         <button class="start-button">Export Một File Tổng</button>
-        <select [(ngModel)]="selectedDelimiter">
-          <option [value]="' '">Tùy ý</option>
-          <option [value]="'.'">Phân tách bằng [ . ]</option>
-          <option [value]="'/'">Phân tách bằng [ / ]</option>
-          <option [value]="'\n'">Phân tách bằng [ new_line ]</option>
-        </select>
       </div>
 
       <table class="data-table">
         <thead>
           <tr>
-            <th style="width: 30px; text-align: center;">ID</th>
-            <th style="width: 100px; text-align: center;">Name File</th>
+            <th style="width: 20px; text-align: center;">ID</th>
+            <th style="width: 250px;">Name File</th>
             <th style="width: 50px; text-align: center;">Status</th>
             <th>Content</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of tableData">
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>{{ item }}</td>
+            <td style="text-align: center;">{{ item.id }}</td>
+            <td>{{ item.nameFile }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.content }}</td>
           </tr>
         </tbody>
       </table>
