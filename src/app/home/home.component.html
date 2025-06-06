@@ -1,39 +1,120 @@
 <div class="container">
   <!-- Header -->
-  <header class="header">
-    <input type="text" placeholder="Search Voice..." class="search-input" />
-    <select class="select-input">
-        <option value="">Select Voice</option>
-    </select>
-    <select class="select-input">
-        <option value="">Select Model</option>
-    </select>
+  <header class="header" style="width: 100%;">
+    <div class="settings-container">
+      <div style="width: 100%;">
+        <input [(ngModel)]="IdVoice" type="text" placeholder="ID Voice..." class="search-input" style="margin-right: 10px;"/>
+        <span (click)="fnSearchVoice()" style="color: blue; font-weight: bold; cursor: pointer">Seach Voice</span>
+      </div>
+      <div style="width: 100%;">
+        <div style="width: 100%; margin-top: 10px;">
+          <label>Name: </label><b>{{infoVoice.name ?? ''}}</b>
+        </div>
+        <div style="width: 100%; margin-top: 10px;">
+          <label>Category: </label><b>{{infoVoice.category ?? ''}}</b>
+        </div>
+        <div style="width: 100%; margin-top: 10px;">
+          <label>Language: </label><b>{{infoVoice.language ?? ''}}</b>
+        </div>
+        <div style="width: 100%; margin-top: 10px;">
+          <label>Model id: </label>
+        </div>
+        <select class="select-input" style=" margin-top: 5px;" id="modelSelect" [(ngModel)]="infoVoice.verified_languages">
+          <option *ngFor="let voice of infoVoice.listModel" [value]="voice">
+            {{ voice }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="settings-container">
+      <div><span><b>SETTING</b></span></div>
 
-    <input type="number" placeholder="Number" width="20px" class="number-input" />
+      <div class="setting-row">
+        <label>Speed:</label>
+        <input readonly [(ngModel)]="infoSetting.speed" style="width: 20px;" type="text" placeholder="0" class="number-input"/>
+        <input [(ngModel)]="infoSetting.speed" style="width: 290px;" type="range" id="slider" min="0.70" max="1.20" step="0.01" />
+      </div>
 
-    <input type="file" class="file-input" (change)="fnOnFileSelected($event)" accept=".txt" />
+      <div class="setting-row">
+        <label>Stability:</label>
+        <input readonly [value]="infoSetting.stability + '%'" style="width: 20px;" type="text" placeholder="0%" class="number-input" />
+        <input [(ngModel)]="infoSetting.stability" style="width: 290px;" type="range" id="slider" min="0" max="100" />
+      </div>
+
+      <div class="setting-row">
+        <label>Similarity:</label>
+        <input readonly [value]="infoSetting.similarity + '%'" style="width: 20px;" type="text" placeholder="0%" class="number-input" />
+        <input [(ngModel)]="infoSetting.similarity" style="width: 290px;" type="range" id="slider" min="0" max="100" />
+      </div>
+
+      <div class="setting-row">
+        <label>Style:</label>
+        <input readonly [value]="infoSetting.style + '%'" style="width: 20px;" type="text" placeholder="0%" class="number-input" />
+        <input [(ngModel)]="infoSetting.style" style="width: 290px;" type="range" id="slider" min="0" max="100" />
+      </div>
+
+      <div class="setting-row">
+        <label>Speaker boost:</label>
+        <input type="checkbox" checked="{{infoSetting.speakerBoost}}"/>
+      </div>
+    </div>
   </header>
 
   <!-- Main -->
   <main class="main">
-    <button class="start-button" (click)="fnStart()">Start</button>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>status</th>
-          <th>Voice</th>
-          <th>content</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of tableData">
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>{{ item }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div style="width: 100%;">
+      <div style="width: 100%;">
+        <!-- <input type="file" class="file-input" (change)="fnOnFileSelected($event)" accept=".txt" /> -->
+        <label class="custom-file-label" for="fileInput">
+        <span>{{ 'Chọn một file...' }}</span>
+        </label>
+        <input
+          accept=".txt"
+          type="file"
+          id="fileInput"
+          class="custom-file-input"
+          (change)="fnOnFileSelected($event)"
+        >
+        <label class="custom-file-label" for="folderInput">
+        <span>{{ 'Chọn nhiều file trong một folder...' }}</span>
+        </label>
+        <input
+          type="file"
+          id="folderInput"
+          class="custom-file-input"
+          (change)="fnOnfolderSelected($event)"
+          webkitdirectory
+        >
+      </div>
+      <div style="width: 100%; margin-top: 20px; text-align: right;">
+        <button class="start-button" (click)="fnExportFile()">Export Từng File</button>
+        <button class="start-button">Export Một File Tổng</button>
+        <select [(ngModel)]="selectedDelimiter">
+          <option [value]="' '">Tùy ý</option>
+          <option [value]="'.'">Phân tách bằng [ . ]</option>
+          <option [value]="'/'">Phân tách bằng [ / ]</option>
+          <option [value]="'\n'">Phân tách bằng [ new_line ]</option>
+        </select>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 30px; text-align: center;">ID</th>
+            <th style="width: 100px; text-align: center;">Name File</th>
+            <th style="width: 50px; text-align: center;">Status</th>
+            <th>Content</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of tableData">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{ item }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </main>
 </div>

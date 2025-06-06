@@ -1,26 +1,56 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ElevenlabsService } from '../service/service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
+    FormsModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
   constructor(private elevenlabs: ElevenlabsService) {}
-
-  text = 'I want to send you all the sweet, soft sunshine/ To see the fragrant season in your mysterious eyes on stormy days/ To tell you a few words of my heart/ Like autumn coming simply in the memories of each other.';
+  
   tableData: string[] = [];
+  IdVoice = '';
+  selectedDelimiter = " ";
+  infoVoice: any = {
+    name: "",
+    category: "",
+    language: "",
+    listModel: []
+  };
+  infoSetting = {
+    speed: 1,
+    stability: 50,
+    similarity: 75,
+    style: 0,
+    speakerBoost: true
+  };
 
-  async fnStart() {
+
+
+  fnSearchVoice(){
+     this.elevenlabs.getVoiceInfoById(this.IdVoice).subscribe({
+      next: (data) => {
+          this.infoVoice.name = data.name ?? '';
+          this.infoVoice.category = data.category ?? '';
+          this.infoVoice.language = data.labels.language ?? '';
+          this.infoVoice.listModel = data.high_quality_base_model_ids ?? [];
+        console.log(data);
+      },
+      error: (err) => {
+        console.error('Error fetching voice info:', err);
+      }
+    });
+  }
+  async fnExportFile() {
     let i = 0;
     for (const item of this.tableData) {
       console.log(item);
@@ -49,6 +79,10 @@ export class HomeComponent {
     }
   }
 
+  fnOnfolderSelected(event: Event): void  {
+    const input = event.target as HTMLInputElement;
+    console.log(input.files);
+  }
 
   fnOnFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -59,7 +93,7 @@ export class HomeComponent {
     const reader = new FileReader();
     reader.onload = () => {
       const text = reader.result as string;
-      const arrayConten = this.fnSplitTextBySpaceMaxLength(text, 10);
+      const arrayConten = this.fnSplitTextBySpaceMaxLength(text, 10, "\n");
         this.tableData = arrayConten;
       console.log('File content:', text);
       // Bạn có thể xử lý nội dung file ở đây
@@ -70,8 +104,8 @@ export class HomeComponent {
     reader.readAsText(file);
   }
 
-  fnSplitTextBySpaceMaxLength(text: string, maxLength: number = 200): string[] {
-    const words = text.split(' ');
+  fnSplitTextBySpaceMaxLength(text: string, maxLength: number = 200, split: string = " "): string[] {
+    const words = text.split(split);
     const result: string[] = [];
     let currentChunk = '';
 
